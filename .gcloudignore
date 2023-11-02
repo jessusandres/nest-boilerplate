@@ -1,0 +1,13 @@
+.scannerwork
+.idea
+test
+.env.example
+.prettierrc
+commitlint.config.js
+jest.config.json
+nest-cli.json
+README.md
+runDeploy.sh
+sonar.properties
+tsconfig.build.json
+tsconfig.json
