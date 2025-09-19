@@ -3,9 +3,9 @@ import { HttpStatus } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 
 /* Project */
+import { ApiResponse } from '@shared/dto';
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
-import { ApiResponse } from '../../shared/dto';
 
 describe('HomeController', () => {
   let controller: HomeController;

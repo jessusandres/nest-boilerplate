@@ -2,11 +2,11 @@ import { Controller, Get, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { CacheTTL } from '@nestjs/common/cache';
 
 /* Project */
+import { HttpCacheInterceptor } from '@shared/interceptors';
+import { minutesInMilliseconds } from '@shared/utils';
+import { ApiResponse } from '@shared/dto';
+import { ApiOkResponseWithData } from '@shared/decorators/api-ok.decorator';
 import { HomeService } from './home.service';
-import { HttpCacheInterceptor } from '../../shared/interceptors';
-import { minutesInMilliseconds } from '../../shared/utils';
-import { ApiResponse } from '../../shared/dto';
-import { ApiOkResponseWithData } from '../../shared/decorators/api-ok.decorator';
 import { FindLastCountryResponse } from './dto';
 
 @Controller()

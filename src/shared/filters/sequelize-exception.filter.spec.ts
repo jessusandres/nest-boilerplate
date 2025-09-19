@@ -8,16 +8,16 @@ import * as request from 'supertest';
 import { AssociationError, ValidationError } from 'sequelize';
 
 /* Project */
-import { SequelizeExceptionFilter } from './sequelize-exception.filter';
 import {
   argumentsHostMock,
   mockGetRequest,
   mockGetResponse,
   mockStatus,
-} from '../../../test/mocks/HttpContext.mock';
-import { HomeController } from '../../components/home/home.controller';
+} from '@tests/mocks/HttpContext.mock';
+import { HomeController } from '@components/home/home.controller';
+import { HomeService } from '@components/home/home.service';
 import { RedisService } from '../services';
-import { HomeService } from '../../components/home/home.service';
+import { SequelizeExceptionFilter } from './sequelize-exception.filter';
 
 describe('SequelizeExceptionFilter', () => {
   let app: INestApplication;

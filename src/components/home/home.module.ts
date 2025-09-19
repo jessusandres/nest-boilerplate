@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 /* Project */
+import { CountryEntity } from '@shared/models';
+import { SharedModule } from '@shared/shared.module';
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
-import { CountryEntity } from '../../shared/models';
-import { SharedModule } from '../../shared/shared.module';
 import { QueryHandlers } from './queries';
 
 @Module({

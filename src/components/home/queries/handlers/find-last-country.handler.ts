@@ -3,9 +3,9 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 
 /* Project */
+import { CountryEntity } from '@shared/models';
 import { FindLastCountryQuery } from '../impl';
 import { FindLastCountryQueryResult } from '../interfaces';
-import { CountryEntity } from '../../../../shared/models';
 
 @QueryHandler(FindLastCountryQuery)
 export class FindLastCountryHandler

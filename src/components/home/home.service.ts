@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
 /* Project */
-import { RedisService } from '../../shared/services';
+import { RedisService } from '@shared/services';
 import { FindLastCountryQuery } from './queries/impl';
 import { FindLastCountryResponse } from './dto';
 

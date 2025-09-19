@@ -4,10 +4,17 @@ import { Module } from '@nestjs/common';
 import { MailerService, StorageService } from './services';
 import { AppCacheModule } from './app-cache.module';
 import { DatabaseModule } from './database.module';
+import { AppThrottlerModule } from './throttler.module';
 
 @Module({
-  imports: [AppCacheModule, DatabaseModule],
+  imports: [AppCacheModule, DatabaseModule, AppThrottlerModule],
   providers: [MailerService, StorageService],
-  exports: [AppCacheModule, DatabaseModule, MailerService, StorageService],
+  exports: [
+    AppCacheModule,
+    DatabaseModule,
+    AppThrottlerModule,
+    MailerService,
+    StorageService,
+  ],
 })
 export class SharedModule {}

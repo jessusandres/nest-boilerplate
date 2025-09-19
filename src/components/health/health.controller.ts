@@ -8,7 +8,7 @@ import {
 } from '@nestjs/terminus';
 
 /* Project */
-import { Public } from '../../shared/utils';
+import { Public } from '@shared/decorators';
 
 @Controller('health')
 export class HealthController {

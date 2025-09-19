@@ -1,5 +1,3 @@
-import { SetMetadata } from '@nestjs/common';
-
 /* Project */
 import { getEnv } from './env';
 import { Role } from '../enums';
@@ -30,7 +28,6 @@ export const MAX_DEFAULT_MB = 10;
 export const MAX_FILE_SIZE = MAX_DEFAULT_MB * MB_BYTES;
 
 export const IS_PUBLIC_KEY = 'isPublic';
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 export const getSQLPagination = (
   page: number = DEFAULT_PAGE,

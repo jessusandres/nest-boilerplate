@@ -16,11 +16,11 @@ import {
   HttpExceptionFilter,
   SequelizeExceptionFilter,
   TypeExceptionFilter,
-} from './shared/filters';
+} from '@shared/filters';
 import { AppModule } from './app.module';
-import { AuthGuard } from './shared/guards';
-import { validationPipeOptions } from './shared/helpers';
-import { RolesGuard } from './shared/guards/roles.guard';
+import { AuthGuard } from '@shared/guards';
+import { validationPipeOptions } from '@shared/helpers';
+import { RolesGuard } from '@shared/guards/roles.guard';
 
 async function bootstrap(): Promise<void> {
   const app: INestApplication = await NestFactory.create(AppModule, {});
@@ -30,13 +30,14 @@ async function bootstrap(): Promise<void> {
 
   const pathPrefix: string = configService.get('PATH_PREFIX') || 'api';
 
+  // Swagger options, the variables are required and defined in the env vlidator file
   const swaggerOptions = {
-    title: configService.get('APP_NAME') || 'Example API',
-    description: configService.get('APP_DESCRIPTION') || 'Example API',
-    version: configService.get('API_VERSION') || '1.0',
+    title: configService.get<string>('APP_NAME')!,
+    description: configService.get<string>('APP_DESCRIPTION')!,
+    version: configService.get<string>('API_VERSION') || '1.0',
   };
 
-  const port = configService.get('PORT') || 3000;
+  const port = configService.get<number>('PORT')!;
 
   app.setGlobalPrefix(pathPrefix, {
     exclude: ['health'],

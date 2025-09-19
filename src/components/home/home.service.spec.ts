@@ -2,8 +2,8 @@ import { CqrsModule, QueryBus } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 
 /* Project */
+import { RedisService } from '@shared/services';
 import { HomeService } from './home.service';
-import { RedisService } from '../../shared/services';
 
 describe('ApiService', () => {
   let apiService: HomeService;

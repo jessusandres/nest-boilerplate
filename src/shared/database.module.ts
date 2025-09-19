@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
+/* Internal */
+import * as fs from 'fs';
+import * as path from 'path';
+
+/* Project */
 import { Models } from './models';
 
 @Module({
@@ -25,6 +31,22 @@ import { Models } from './models';
           acquire: 30 * 1000, // reduce to 30s
           idle: 15 * 1000, // increase to 15 seconds
         },
+        dialectOptions: /true/.test(configService.get<string>('DB_SSL')!)
+          ? {
+              ssl: {
+                key: fs
+                  .readFileSync(path.join(process.cwd(), 'client-key.pem'))
+                  .toString(),
+                cert: fs
+                  .readFileSync(path.join(process.cwd(), 'client-cert.pem'))
+                  .toString(),
+                ca: fs
+                  .readFileSync(path.join(process.cwd(), 'server-ca.pem'))
+                  .toString(),
+                rejectUnauthorized: false,
+              },
+            }
+          : {},
       }),
       inject: [ConfigService],
     }),

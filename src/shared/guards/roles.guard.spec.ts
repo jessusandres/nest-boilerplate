@@ -8,11 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 
 /* Project */
+import { mockGetRequest, mockGetResponse } from '@tests/mocks/HttpContext.mock';
 import { AuthGuard } from './auth.guard';
-import {
-  mockGetRequest,
-  mockGetResponse,
-} from '../../../test/mocks/HttpContext.mock';
 import { RolesGuard } from './roles.guard';
 import { Role } from '../enums';
 import { IUserProfile } from '../interfaces';

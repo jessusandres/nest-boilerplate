@@ -1,0 +1,43 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "src",
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "**/*.(t|j)s",
+    "!**/main.ts",
+    "!**/index.ts",
+    "!**/node_modules/**",
+    "!**/vendor/**",
+    "!**/dist/**",
+    "!**/test/**",
+    "!**/coverage/**",
+    "!**/shared/**",
+    "!**/domain/events/**",
+    "!**/infrastructure/database/**",
+    "!**/infrastructure/ioc/**",
+    "!**/infrastructure/env/**"
+  ],
+  "coverageDirectory": "../coverage",
+  "testEnvironment": "node",
+  "collectCoverage": true,
+  "coverageReporters": [
+    "json",
+    "html",
+    "lcov"
+  ],
+  "modulePaths": [
+    "<rootDir>"
+  ],
+  "moduleNameMapper": {
+    "^@components/(.*)$": "<rootDir>/components/$1",
+    "^@shared/(.*)$": "<rootDir>/shared/$1",
+    "^@tests/(.*)$": "<rootDir>/../test/$1"
+  }
+}

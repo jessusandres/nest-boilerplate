@@ -1,5 +1,5 @@
 /* External */
-import { plainToInstance, Transform } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
@@ -15,14 +15,20 @@ enum Environment {
   Provision = 'provision',
 }
 
+enum Enabling {
+  Enabled = 'true',
+  Disabled = 'false',
+}
+
 interface IEnvironment {
   NODE_ENV: string;
   APP_NAME: string;
-  API_VERSION: string;
+  API_VERSION?: string;
   HOST: string;
   PORT: number;
   PATH_PREFIX: string;
   DB_CONNECTION: string;
+  DB_SSL: string;
   DB_HOST: string;
   DB_DATABASE: string;
   DB_PORT: number;
@@ -30,6 +36,8 @@ interface IEnvironment {
   DB_PASSWORD: string;
   DB_MAX_CONNECTIONS: number;
   DB_MIN_CONNECTIONS: number;
+  THROTTLE_TTL: number;
+  THROTTLE_LIMIT: number;
   ENABLE_REDIS: string;
   CACHE_TIMEOUT: number;
   REDIS_HOST?: string;
@@ -52,6 +60,7 @@ class EnvironmentVariables implements IEnvironment {
   @IsString()
   APP_NAME: string;
 
+  @IsOptional()
   @IsString()
   API_VERSION: string;
 
@@ -79,6 +88,15 @@ class EnvironmentVariables implements IEnvironment {
   @IsString()
   DB_PASSWORD: string;
 
+  @IsEnum(Enabling)
+  DB_SSL: string;
+
+  @IsNumber()
+  DB_MAX_CONNECTIONS: number;
+
+  @IsNumber()
+  DB_MIN_CONNECTIONS: number;
+
   @IsOptional()
   @IsString()
   BUCKET_NAME: string;
@@ -92,13 +110,12 @@ class EnvironmentVariables implements IEnvironment {
   BUCKET_SA_EMAIL: string;
 
   @IsNumber()
-  DB_MAX_CONNECTIONS: number;
+  THROTTLE_TTL: number;
 
   @IsNumber()
-  DB_MIN_CONNECTIONS: number;
+  THROTTLE_LIMIT: number;
 
-  // TODO: Refactor, because the string type is change to boolean
-  @Transform(({ value }) => /true/.test(String(value || '')))
+  @IsEnum(Enabling)
   ENABLE_REDIS: string;
 
   @IsOptional()
