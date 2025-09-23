@@ -14,9 +14,9 @@ import {
   mockGetResponse,
   mockStatus,
 } from '@tests/mocks/HttpContext.mock';
-import { HomeController } from '@components/home/home.controller';
-import { HomeService } from '@components/home/home.service';
-import { RedisService } from '../services';
+import { HomeController } from '@modules/home/home.controller';
+import { HomeService } from '@modules/home/home.service';
+import { RedisService } from '@infrastructure/cache';
 import { SequelizeExceptionFilter } from './sequelize-exception.filter';
 
 describe('SequelizeExceptionFilter', () => {

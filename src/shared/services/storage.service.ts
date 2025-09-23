@@ -1,71 +1,64 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-
-/* External */
-import {
-  GetSignedUrlConfig,
-  GetSignedUrlResponse,
-  Storage,
-} from '@google-cloud/storage';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 /* Project */
-import { fileExtension } from '../helpers';
+import { STORAGE_REPOSITORY, StorageRepository } from '@infrastructure/storage';
 
 @Injectable()
 export class StorageService {
-  private readonly cloudStorage: Storage;
-  private readonly bucketName: string;
-  private readonly storageApiUrl = 'https://storage.googleapis.com';
+  private readonly logger = new Logger(StorageService.name);
 
-  constructor(private readonly configService: ConfigService) {
-    this.bucketName = this.configService.get('BUCKET_NAME')!;
-    const b64PrivateKey = this.configService.get<string>('BUCKET_PRIVATE_KEY');
+  private readonly storageTypes = [
+    { extension: 'pdf', contentType: 'application/pdf' },
+    { extension: 'csv', contentType: 'text/csv' },
+    { extension: 'txt', contentType: 'text/plain' },
+    { extension: 'jpg', contentType: 'image/jpeg' },
+    { extension: 'png', contentType: 'image/png' },
+    { extension: 'gif', contentType: 'image/gif' },
+    { extension: 'webp', contentType: 'image/webp' },
+    { extension: 'svg', contentType: 'image/svg+xml' },
+  ];
 
-    const credentials = {};
+  constructor(
+    @Inject(STORAGE_REPOSITORY)
+    private readonly storage: StorageRepository,
+  ) {}
 
-    if (b64PrivateKey) {
-      const decodedBase64PrivateKey = Buffer.from(
-        b64PrivateKey,
-        'base64',
-      ).toString('utf-8');
+  async generateUploadSignedUrl(fileName: string) {
+    this.logger.debug(`Generating read signed url for ${fileName}`);
 
-      credentials['private_key'] = decodedBase64PrivateKey
-        .split(String.raw`\n`)
-        .join('\n');
+    const extension = fileName.split('.').pop();
 
-      const serviceAccountEmail =
-        this.configService.get<string>('BUCKET_SA_EMAIL');
-      credentials['client_email'] = serviceAccountEmail;
+    if (!extension) throw new Error('Invalid file name');
+
+    const storageType = this.storageTypes.find(
+      (t) => t.extension === extension,
+    );
+
+    if (!storageType) {
+      throw new Error('Invalid file type');
     }
 
-    this.cloudStorage = new Storage(credentials);
+    return this.storage.generateUploadSignedUrl(
+      fileName,
+      storageType.contentType,
+    );
   }
 
-  async generateV4UploadSignedUrl(
-    fileName: string,
-  ): Promise<{ uploadSignedUrl: string; publicUrl: string }> {
-    // These options will allow temporary uploading of the file with outgoing
-    const options: GetSignedUrlConfig = {
-      version: 'v4',
-      action: 'write',
-      expires: Date.now() + 2 * 60 * 1000, // 2 minutes
-      contentType:
-        fileExtension(fileName).toLowerCase() === 'pdf'
-          ? 'application/pdf'
-          : 'text/csv',
-      extensionHeaders: {
-        'X-Goog-Acl': 'public-read',
-      },
-    };
+  async generateReadSignedUrl(fileName: string) {
+    this.logger.debug(`Generating read signed url for ${fileName}`);
 
-    // Get a v4 signed URL for uploading file
-    const [uploadSignedUrl]: GetSignedUrlResponse = await this.cloudStorage
-      .bucket(this.bucketName)
-      .file(fileName)
-      .getSignedUrl(options);
+    const extension = fileName.split('.').pop();
 
-    const publicUrl = `${this.storageApiUrl}/${this.bucketName}/${fileName}`;
+    if (!extension) throw new Error('Invalid file name');
 
-    return { uploadSignedUrl, publicUrl };
+    const storageType = this.storageTypes.find(
+      (t) => t.extension === extension,
+    );
+
+    if (!storageType) {
+      throw new Error('Invalid file type');
+    }
+
+    return this.storage.generateReadSignedUrl(fileName);
   }
 }

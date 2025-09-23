@@ -1,5 +1,5 @@
 /* Project */
-import { getEnv } from './env';
+import { getEnv } from '@core/config/env';
 import { Role } from '../enums';
 
 export const JWKS_REQUESTS_PER_MINUTE = 5 as const;

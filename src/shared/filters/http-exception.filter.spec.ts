@@ -19,9 +19,9 @@ import {
   mockGetResponse,
   mockStatus,
 } from '@tests/mocks/HttpContext.mock';
-import { HomeController } from '@components/home/home.controller';
-import { RedisService } from '../services';
-import { HomeService } from '@components/home/home.service';
+import { HomeController } from '@modules/home/home.controller';
+import { RedisService } from '@infrastructure/cache';
+import { HomeService } from '@modules/home/home.service';
 
 describe('HttpExceptionFilter', () => {
   let app: INestApplication;

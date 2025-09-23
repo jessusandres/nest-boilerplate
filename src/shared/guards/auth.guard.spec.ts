@@ -14,9 +14,9 @@ import * as request from 'supertest';
 
 /* Project */
 import { AuthGuard } from './auth.guard';
-import { RedisService } from '../services';
-import { HomeController } from '../../components/home/home.controller';
-import { HomeService } from '../../components/home/home.service';
+import { RedisService } from '@infrastructure/cache';
+import { HomeController } from '@modules/home/home.controller';
+import { HomeService } from '@modules/home/home.service';
 import { IUserProfile } from '../interfaces';
 import { Role } from '../enums';
 

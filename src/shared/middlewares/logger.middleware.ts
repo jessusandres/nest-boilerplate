@@ -21,7 +21,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const dateDif = finallyTime - startTime;
 
       this.logger.log(
-        `${method} ${originalUrl} ${statusCode} ${dateDif}ms ${contentLength} - ${userAgent} ${ip}`,
+        `${method} ${originalUrl} ${statusCode}:${dateDif}ms size:${contentLength} - ${userAgent} ${ip}`,
       );
     });
 

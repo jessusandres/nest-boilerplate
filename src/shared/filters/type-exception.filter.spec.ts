@@ -7,8 +7,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as request from 'supertest';
 
 /* Project */
-import { HomeService } from '@components/home/home.service';
-import { HomeController } from '@components/home/home.controller';
+import { HomeService } from '@modules/home/home.service';
+import { HomeController } from '@modules/home/home.controller';
 import {
   argumentsHostMock,
   mockGetRequest,
@@ -16,7 +16,7 @@ import {
   mockStatus,
 } from '@tests/mocks/HttpContext.mock';
 import { TypeExceptionFilter } from './type-exception.filter';
-import { RedisService } from '../services';
+import { RedisService } from '@infrastructure/cache';
 
 describe('TypeExceptionFilter', () => {
   let app: INestApplication;

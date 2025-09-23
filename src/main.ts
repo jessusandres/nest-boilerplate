@@ -1,41 +1,38 @@
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+
 if (/true/.test(process.env.ENABLE_NEW_RELIC || 'false')) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('newrelic');
 }
 
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger, ValidationPipe } from '@nestjs/common';
+
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-/* External */
-import * as bodyParser from 'body-parser';
+import { SwaggerModule } from '@nestjs/swagger';
 
 /* Project */
+import { setupSwagger } from '@core/swagger';
 import {
   HttpExceptionFilter,
   SequelizeExceptionFilter,
   TypeExceptionFilter,
 } from '@shared/filters';
-import { AppModule } from './app.module';
-import { AuthGuard } from '@shared/guards';
 import { validationPipeOptions } from '@shared/helpers';
+import { AuthGuard } from '@shared/guards';
 import { RolesGuard } from '@shared/guards/roles.guard';
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
-  const app: INestApplication = await NestFactory.create(AppModule, {});
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
 
   const logger = new Logger('APP');
   const configService: ConfigService = app.get(ConfigService);
 
   const pathPrefix: string = configService.get('PATH_PREFIX') || 'api';
-
-  // Swagger options, the variables are required and defined in the env vlidator file
-  const swaggerOptions = {
-    title: configService.get<string>('APP_NAME')!,
-    description: configService.get<string>('APP_DESCRIPTION')!,
-    version: configService.get<string>('API_VERSION') || '1.0',
-  };
 
   const port = configService.get<number>('PORT')!;
 
@@ -45,7 +42,8 @@ async function bootstrap(): Promise<void> {
 
   app.enableCors();
 
-  app.use(bodyParser.json({ limit: '10mb' }));
+  app.useBodyParser('json', { limit: '10mb' });
+  app.useBodyParser('urlencoded', { limit: '10mb', extended: true });
 
   // Global error filters
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -60,28 +58,10 @@ async function bootstrap(): Promise<void> {
   app.useGlobalGuards(new AuthGuard(reflector));
   app.useGlobalGuards(new RolesGuard(reflector));
 
-  // Swagger configuration
-  const config = new DocumentBuilder()
-    .setTitle(swaggerOptions.title)
-    .setDescription(swaggerOptions.description)
-    .setVersion(swaggerOptions.version)
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
-    )
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config, {
+  const swaggerConfig = setupSwagger(configService);
+  const document = SwaggerModule.createDocument(app, swaggerConfig, {
     // ignoreGlobalPrefix: true,
   });
-
   SwaggerModule.setup('docs', app, document);
 
   logger.log(`PORT::${configService.get('PORT')}`);

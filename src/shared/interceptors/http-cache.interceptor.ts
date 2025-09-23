@@ -1,9 +1,6 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
-/* External */
-import { Request } from 'express';
-
 /* Project */
 import { AuthenticatedRequest } from '../interfaces';
 

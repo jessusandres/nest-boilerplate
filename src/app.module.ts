@@ -7,28 +7,23 @@ import {
 import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { HttpModule } from '@nestjs/axios';
-import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard } from '@nestjs/throttler';
 
 /* Project */
-import { getEnv } from '@shared/utils';
-import { EnvValidation } from '@shared/validators';
+import { AppConfigModule } from '@core/config';
+import { CoreModule } from '@core/core.module';
 import { LoggerMiddleware } from '@shared/middlewares';
 import { SharedModule } from '@shared/shared.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Modules } from './components';
+import { Modules } from './modules';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      validate: EnvValidation,
-      isGlobal: true,
-      expandVariables: true,
-      envFilePath: getEnv(),
-    }),
     HttpModule,
     CqrsModule.forRoot(),
+    AppConfigModule,
+    CoreModule,
     SharedModule,
     ...Modules,
   ],
