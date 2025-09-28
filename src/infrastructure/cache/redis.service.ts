@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 /* External */
-import { RedisClientType } from '@keyv/redis';
+import KeyvRedis, { RedisClientType } from '@keyv/redis';
 
 /* Project */
 import { minutesInMilliseconds } from '@shared/utils';
@@ -33,15 +33,15 @@ export class RedisService implements OnModuleDestroy {
   }
 
   private get redisClient(): RedisClientType {
-    const redisStore: any = this.cacheManager['stores'][0].store;
+    const redisStore = this.cacheManager['stores'][0]
+      .store as KeyvRedis<unknown>;
 
-    return redisStore._client as RedisClientType;
+    return redisStore.client as RedisClientType;
   }
 
   async getKeys(pattern: string): Promise<string[]> {
     if (!this.ENABLE_REDIS) return [];
 
-    // return await this.redisClient.keys(pattern);
     return this.redisClient.keys(pattern).catch((reason) => {
       this.logger.error(reason);
       return [];
@@ -130,7 +130,7 @@ export class RedisService implements OnModuleDestroy {
         .catch((reason) => this.logger.error(reason));
   }
 
-  onModuleDestroy(): void {
-    this.cacheManager?.disconnect();
+  async onModuleDestroy(): Promise<void> {
+    await this.cacheManager?.disconnect();
   }
 }

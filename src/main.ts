@@ -1,5 +1,3 @@
-import { FastifyAdapter } from '@nestjs/platform-fastify';
-
 if (/true/.test(process.env.ENABLE_NEW_RELIC || 'false')) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('newrelic');
@@ -76,4 +74,4 @@ async function bootstrap(): Promise<void> {
   });
 }
 
-bootstrap();
+void bootstrap();

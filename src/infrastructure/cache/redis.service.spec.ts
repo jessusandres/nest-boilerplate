@@ -4,8 +4,8 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Logger } from '@nestjs/common';
 
 /* Project */
-import { RedisService } from './redis.service';
 import { minutesInMilliseconds } from '@shared/utils';
+import { RedisService } from './redis.service';
 
 describe('RedisService (ENABLED)', () => {
   let redisService: RedisService;
@@ -29,7 +29,7 @@ describe('RedisService (ENABLED)', () => {
       set: jest.fn().mockResolvedValue(undefined),
       del: jest.fn().mockResolvedValue(undefined),
       mdel: jest.fn().mockResolvedValue(undefined),
-      stores: [{ namespace: 'default', store: { _client: cacheClient } }],
+      stores: [{ namespace: 'default', store: { client: cacheClient } }],
       disconnect: jest.fn(),
     };
 
@@ -168,8 +168,8 @@ describe('RedisService (ENABLED)', () => {
 
     const result = await redisService.resetValuesByKeys(keys);
 
-    expect(cache.stores[0].store._client.keys).toHaveBeenCalledTimes(1);
-    expect(cache.stores[0].store._client.keys).toHaveBeenCalledWith('*');
+    expect(cache.stores[0].store.client.keys).toHaveBeenCalledTimes(1);
+    expect(cache.stores[0].store.client.keys).toHaveBeenCalledWith('*');
     expect(cache.mdel).toHaveBeenCalledTimes(1);
     expect(cache.mdel).toHaveBeenCalledWith(['default:prefix:TEST']);
     expect(result).toBeUndefined();
@@ -180,7 +180,7 @@ describe('RedisService (ENABLED)', () => {
 
     const result = await redisService.resetValuesByKeys(keys);
 
-    expect(cache.stores[0].store._client.keys).not.toHaveBeenCalled();
+    expect(cache.stores[0].store.client.keys).not.toHaveBeenCalled();
     expect(cache.mdel).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
   });
@@ -198,7 +198,7 @@ describe('RedisService (DISABLED)', () => {
       set: jest.fn(),
       del: jest.fn(),
       mdel: jest.fn(),
-      stores: [{ namespace: 'default', store: { _client: cacheClient } }],
+      stores: [{ namespace: 'default', store: { client: cacheClient } }],
       disconnect: jest.fn(),
     };
 

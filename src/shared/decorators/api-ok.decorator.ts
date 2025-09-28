@@ -15,11 +15,11 @@ export function ApiOkResponseWithData<TModel extends Type<unknown>>(
   options?: ApiOkOptions,
 ) {
   const dataSchema = options?.isArray
-    ? { type: 'array', items: { $ref: getSchemaPath(model) } }
-    : { $ref: getSchemaPath(model) };
+    ? { type: 'array', items: { $ref: getSchemaPath(model) }, nullable: false }
+    : { $ref: getSchemaPath(model), nullable: false };
 
   if (options?.nullable) {
-    (dataSchema as any).nullable = true;
+    dataSchema.nullable = true;
   }
 
   return applyDecorators(

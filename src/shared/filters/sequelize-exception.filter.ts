@@ -25,7 +25,7 @@ export class SequelizeExceptionFilter implements ExceptionFilter {
    */
   catch(exception: BaseError, host: ArgumentsHost) {
     this.logger.warn('=== SequelizeExceptionFilter ===');
-    if (exception instanceof Error) this.logger.error(exception.stack);
+    this.logger.error(exception.stack);
     this.logger.error(exception);
 
     const ctx = host.switchToHttp();
@@ -45,7 +45,7 @@ export class SequelizeExceptionFilter implements ExceptionFilter {
       code: status,
       clientCode: uuid,
       message: exception.message,
-      errors: exception['errors'] || [],
+      cause: exception.cause,
       path: request.path,
       params,
       timestamp,

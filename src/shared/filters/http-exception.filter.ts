@@ -25,7 +25,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     this.logger.warn('=== HttpExceptionFilter ===');
 
-    if (exception instanceof Error) this.logger.error(exception.stack);
+    this.logger.error(exception.stack);
     this.logger.error(exception);
 
     const ctx = host.switchToHttp();
@@ -45,7 +45,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       code: status,
       clientCode: uuid,
       message: exception.message,
-      errors: exception['cause'] || [],
+      cause: exception.cause,
       path: request.path,
       params,
       timestamp,

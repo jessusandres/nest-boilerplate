@@ -127,7 +127,6 @@ describe('AuthGuard', () => {
     try {
       authGuard.canActivate(mockedContext as any);
     } catch (err) {
-      console.log({ err });
       expect(err).toBeInstanceOf(UnauthorizedException);
     }
   });

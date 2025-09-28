@@ -4,14 +4,16 @@ import { BadRequestException, ValidationPipeOptions } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { Request } from 'express';
 
+type Dict = Record<string, unknown>;
+
 const blockedKeys = ['pass', 'password', 'card'];
 
 export const filterRequestParams = (req: Request) => {
-  return Object.entries({
-    ...req.params,
-    ...req.body,
-    ...req.query,
-  })
+  const params: Dict = (req.params ?? {}) as Dict;
+  const body: Dict = (req.body ?? {}) as Dict;
+  const query: Dict = (req.query ?? {}) as Dict;
+
+  return Object.entries({ ...params, ...body, ...query })
     .map(([key, value]) =>
       blockedKeys.includes(key) ? { key, value: '******' } : { key, value },
     )
@@ -20,24 +22,12 @@ export const filterRequestParams = (req: Request) => {
     }, {});
 };
 
-export const constraintsAccumulator = (errors: ValidationError[]) => {
+const constraintsAccumulator = (errors: ValidationError[]) => {
   return errors
-    .map((err: ValidationError) => Object.values(err.constraints as any))
+    .map((err: ValidationError) => Object.values(err.constraints ?? {}))
     .reduce((accumulator, next) => [...accumulator, ...next], []);
 };
-
-export const fillChildrenErrors = (
-  validationError: ValidationError,
-  errorsArray: any[],
-) => {
-  if (validationError?.children && validationError.children.length) {
-    validationError.children.forEach((children) => {
-      fillChildrenErrors(children, errorsArray);
-    });
-  } else {
-    errorsArray.push(validationError);
-  }
-};
+export default constraintsAccumulator;
 
 /**
  * Default validation options for global pipe and tests

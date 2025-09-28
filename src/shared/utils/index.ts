@@ -10,7 +10,7 @@ export const DEFAULT_PAGE = 1 as const;
 export const DEFAULT_SIZE = 10 as const;
 export const DEFAULT_SIZE_XLSX = 2000 as const;
 
-export const USER_TYPES_MAP = {
+export const USER_ROLES_MAP: Record<number, Role> = {
   1: Role.ADMIN,
   3: Role.CLIENT,
 } as const;

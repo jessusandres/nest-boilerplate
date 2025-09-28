@@ -1,98 +1,199 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# lookerdevelopers-stores-svc-backoffice
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backoffice service built with NestJS (TypeScript). This project exposes an API with request validation, Swagger documentation, error filters, authentication/role guards, optional cache/Redis, rate limiting, and cloud storage (AWS S3 or Google Cloud Storage) selected via configuration.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Requirements
+- Node.js 18+
+- pnpm 8+
+- PostgreSQL (if you use the local database)
+- Optional Redis (if you enable cache)
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
+## Installation
 ```bash
-$ pnpm install
+  pnpm install
 ```
 
-## Compile and run the project
+## Environment configuration
+Create a `.env` file at the repository root using `.env.example` as a template.
 
+Main variables (see all in `.env.example`):
+
+- Application
+  - APP_NAME=lookerdevelopers-stores-svc-backoffice
+  - API_VERSION=1
+  - HOST=127.0.0.1
+  - PORT=6001
+  - PATH_PREFIX=ms  # global prefix for routes (e.g., /ms/health). If not set, code defaults to `api`.
+
+- Database (PostgreSQL)
+  - DB_CONNECTION=postgres
+  - DB_HOST=127.0.0.1
+  - DB_PORT=5432
+  - DB_USERNAME=...
+  - DB_PASSWORD=...
+  - DB_DATABASE=...
+  - DB_MAX_CONNECTIONS=10
+  - DB_MIN_CONNECTIONS=1
+  - DB_LOGGER=true
+  - DB_SSL=false
+
+- Redis (optional)
+  - ENABLE_REDIS=false
+  - REDIS_HOST=127.0.0.1
+  - REDIS_PORT=6379
+  - REDIS_PASSWORD=
+  - REDIS_CA=
+
+- Rate limiting
+  - THROTTLE_TTL=1
+  - THROTTLE_LIMIT=10
+
+- File storage
+  - STORAGE_PROVIDER=aws  # options: aws | gcp
+  - BUCKET_NAME=
+  - BUCKET_PROJECT_ID=
+
+- AWS (With Identity Center)
+  - S3_BUCKET_NAME=
+  - AWS_REGION=us-east-1
+  - AWS_PROFILE=
+
+## Run
 ```bash
-# development
-$ pnpm run start
+# Development
+pnpm run start:dev
 
-# watch mode
-$ pnpm run start:dev
+# Production (build + run)
+pnpm run build && pnpm run start:prod
 
-# production mode
-$ pnpm run start:prod
+# Simple development mode
+pnpm run start
 ```
 
-## Run tests
+The app starts with a global prefix defined by `PATH_PREFIX` (defaults to `api` when the env var is not set; `.env.example` shows `ms`).
 
+- Swagger docs: `http://localhost:6001/docs`
+- Health check (no prefix): `http://localhost:6001/health`
+
+## Testing
 ```bash
 # unit tests
-$ pnpm run test
+pnpm run test
 
 # e2e tests
-$ pnpm run test:e2e
+pnpm run test:e2e
 
-# test coverage
-$ pnpm run test:cov
+# coverage
+pnpm run test:cov
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+## Folder structure (src)
+```
+src
+├── app.controller.spec.ts
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+├── main.ts
+├── core
+│   ├── config
+│   │   ├── config.module.ts
+│   │   ├── env.ts
+│   │   ├── env.validator.ts
+│   │   └── index.ts
+│   ├── core.module.ts
+│   ├── exceptions
+│   │   └── index.ts
+│   ├── health
+│   │   ├── health.controller.spec.ts
+│   │   ├── health.controller.ts
+│   │   └── health.module.ts
+│   ├── logging
+│   │   └── index.ts
+│   └── swagger
+│       └── index.ts
+├── infrastructure
+│   ├── cache
+│   │   ├── app-cache.module.ts
+│   │   ├── index.ts
+│   │   ├── redis.factory.ts
+│   │   ├── redis.service.spec.ts
+│   │   └── redis.service.ts
+│   ├── database
+│   │   ├── database.module.ts
+│   │   ├── index.ts
+│   │   └── models
+│   │       ├── country.entity.ts
+│   │       ├── index.ts
+│   │       └── interfaces
+│   │           ├── country.entity.interface.ts
+│   │           └── index.ts
+│   ├── http
+│   │   └── index.ts
+│   ├── infrastructure.module.ts
+│   ├── limiter
+│   │   ├── index.ts
+│   │   └── throttler.module.ts
+│   ├── queue
+│   │   └── index.ts
+│   └── storage
+│       ├── aws-s3-storage.repository.ts
+│       ├── gcp-storage.service.spec.ts
+│       ├── google-cloud-storage.service.ts
+│       ├── index.ts
+│       ├── storage.module.ts
+│       └── storage.repository.ts
+├── modules
+│   ├── auth
+│   │   ├── auth.module.ts
+│   │   ├── guards/
+│   │   └── strategies/
+│   ├── home
+│   │   ├── commands/
+│   │   │   ├── handlers/
+│   │   │   └── impl/
+│   │   ├── home.controller.spec.ts
+│   │   ├── home.controller.ts
+│   │   ├── home.module.ts
+│   │   ├── home.service.spec.ts
+│   │   ├── home.service.ts
+│   │   └── queries/
+│   │       ├── handlers/
+│   │       ├── impl/
+│   │       └── interfaces/
+│   └── index.ts
+└── shared
+    ├── decorators/
+    ├── dto/
+    ├── enums/
+    ├── filters/
+    ├── guards/
+    ├── helpers/
+    ├── interceptors/
+    ├── interfaces/
+    ├── middlewares/
+    ├── services/
+    ├── shared.module.ts
+    └── utils/
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Layer overview
+- core: configuration, exceptions, health, logging, and Swagger.
+- infrastructure: technical integrations (cache/Redis, DB, HTTP, rate limiting, queues, cloud storage).
+- modules: domain use cases and controllers (e.g., auth, home).
+- shared: cross-cutting utilities (DTOs, guards, filters, interceptors, services, helpers).
 
-## Resources
+## File storage
+- Supported providers: `aws` (S3) and `gcp` (Google Cloud Storage).
+- Select via env: `STORAGE_PROVIDER=aws | gcp`.
+- Relevant code: `src/infrastructure/storage/*` and consumer `src/shared/services/storage.service.ts`.
 
-Check out a few resources that may come in handy when working with NestJS:
+## Useful scripts
+- Lint/format (if configured in package.json):
+  - pnpm run lint
+  - pnpm run format
+- Build: `pnpm run build`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Notes
+- The global route prefix is defined with `PATH_PREFIX` and excludes `/health` (see `main.ts`).
+- Swagger is available at `/docs`.

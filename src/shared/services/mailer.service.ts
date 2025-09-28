@@ -10,7 +10,10 @@ export class MailerService implements OnApplicationBootstrap {
     this.logger.log('Initializing mail provider...');
   }
 
-  async send(emailPayload: any): Promise<{ status: number }> {
+  async send(emailPayload: {
+    from: string;
+    to: string;
+  }): Promise<{ status: number }> {
     this.logger.log('Sending email...');
 
     this.logger.log(JSON.stringify(emailPayload));

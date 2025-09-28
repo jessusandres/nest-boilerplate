@@ -9,8 +9,8 @@ import { Reflector } from '@nestjs/core';
 /* Project */
 import { Role } from '../enums';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { USER_TYPES_MAP } from '../utils';
-import { IUserProfile } from '../interfaces';
+import { USER_ROLES_MAP } from '../utils';
+import { AuthenticatedRequest, IUserProfile } from '../interfaces';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,13 +24,13 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles?.length) return true;
 
-    const request = context.switchToHttp().getRequest();
+    const request: AuthenticatedRequest = context.switchToHttp().getRequest();
 
     const user: IUserProfile = request.user;
 
     if (!user?.id) throw new UnauthorizedException('User not found');
 
-    const userRole = USER_TYPES_MAP[user.roleId];
+    const userRole = USER_ROLES_MAP[user.roleId];
 
     if (!userRole)
       throw new UnauthorizedException(

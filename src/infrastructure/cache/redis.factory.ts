@@ -6,7 +6,7 @@ import { createClient } from '@redis/client';
 import KeyvRedis, { KeyvRedisOptions, RedisClientOptions } from '@keyv/redis';
 import Keyv from 'keyv';
 
-export const KeyvRedisFactory = (configService: ConfigService) => {
+export const KeyvRedisFactory = async (configService: ConfigService) => {
   const logger = new Logger('KeyvRedisFactory');
 
   const enableRedis = configService.get<string>('ENABLE_REDIS') == 'true';
@@ -53,9 +53,11 @@ export const KeyvRedisFactory = (configService: ConfigService) => {
 
   const redisClient = createClient(redisClientOptions);
 
-  redisClient.on('error', (err) => {
+  redisClient.on('error', (err: Error) => {
     logger.warn(`Redis client error: ${err.message}`);
   });
+
+  await redisClient.connect().then(() => logger.log('Redis connected'));
 
   const redisStore = new KeyvRedis(redisClient, redisOptions);
 
@@ -65,7 +67,7 @@ export const KeyvRedisFactory = (configService: ConfigService) => {
     useKeyPrefix: false,
   });
 
-  cacheStore.on('error', (error) => {
+  cacheStore.on('error', (error: Error) => {
     logger.warn(`Redis error: ${error.message}`);
   });
 
