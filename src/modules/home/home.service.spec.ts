@@ -19,7 +19,9 @@ describe('ApiService', () => {
       .overrideProvider(RedisService)
       .useValue({ getKeys: jest.fn().mockResolvedValue([]) })
       .overrideProvider(StorageService)
-      .useValue({})
+      .useValue({
+        generateReadSignedUrl: jest.fn().mockResolvedValue('https://test.com'),
+      })
       .compile();
 
     apiService = module.get<HomeService>(HomeService);
@@ -47,5 +49,14 @@ describe('ApiService', () => {
 
     expect(result).toBeDefined();
     expect(result).toStrictEqual([]);
+  });
+
+  it('should "presignReadURL" works', async () => {
+    const result = await apiService.presignReadURL('demo.test');
+
+    expect(result).toBeDefined();
+    expect(result).toStrictEqual({ url: 'https://test.com' });
+
+    expect(storageService.generateReadSignedUrl).toHaveBeenCalledTimes(1);
   });
 });

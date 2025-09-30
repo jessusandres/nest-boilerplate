@@ -15,6 +15,7 @@ import {
   mockStatus,
 } from '@tests/mocks/HttpContext.mock';
 import { HomeController } from '@modules/home/home.controller';
+import { FindLastCountryResponse } from '@modules/home/dto';
 import { HomeService } from '@modules/home/home.service';
 import { RedisService } from '@infrastructure/cache';
 import { SequelizeExceptionFilter } from './sequelize-exception.filter';
@@ -68,7 +69,11 @@ describe('SequelizeExceptionFilter', () => {
 
     jest
       .spyOn(homeService, 'getLastCountry')
-      .mockImplementation(mockImplementation as any);
+      .mockImplementation(
+        mockImplementation as unknown as () => Promise<
+          FindLastCountryResponse | undefined
+        >,
+      );
 
     return request(app.getHttpServer())
       .get('/')

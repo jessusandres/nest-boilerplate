@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 /* Project */
 import { AwsS3StorageRepository } from './aws-s3-storage.repository';
-import { GoogleCloudStorageService } from './google-cloud-storage.service';
+import { GoogleCloudStorageRepository } from './google-cloud-storage.repository';
 
 @Module({
   imports: [],
@@ -19,7 +19,7 @@ import { GoogleCloudStorageService } from './google-cloud-storage.service';
           return new AwsS3StorageRepository(configService);
         }
 
-        return new GoogleCloudStorageService(configService);
+        return new GoogleCloudStorageRepository(configService);
       },
     },
   ],

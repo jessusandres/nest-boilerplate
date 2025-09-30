@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import {
+  ExecutionContext,
   HttpStatus,
   INestApplication,
   Logger,
@@ -90,7 +91,9 @@ describe('AuthGuard', () => {
 
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false);
 
-    const result = authGuard.canActivate(mockedContext as any);
+    const result = authGuard.canActivate(
+      mockedContext as unknown as ExecutionContext,
+    );
 
     expect(result).toBe(true);
   });
@@ -125,7 +128,7 @@ describe('AuthGuard', () => {
     };
 
     try {
-      authGuard.canActivate(mockedContext as any);
+      authGuard.canActivate(mockedContext as unknown as ExecutionContext);
     } catch (err) {
       expect(err).toBeInstanceOf(UnauthorizedException);
     }

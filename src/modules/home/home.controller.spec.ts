@@ -21,6 +21,9 @@ describe('HomeController', () => {
       .useValue({
         getLastCountry: jest.fn().mockResolvedValue({}),
         getCacheKeys: jest.fn().mockResolvedValue([]),
+        presignReadURL: jest
+          .fn()
+          .mockResolvedValue({ url: 'https://test.com' }),
       })
       .compile();
 
@@ -47,5 +50,26 @@ describe('HomeController', () => {
 
     expect(result).toBeDefined();
     expect(result).toStrictEqual(new ApiResponse([], HttpStatus.OK));
+  });
+
+  it('should "presignURL" works', async () => {
+    const result = await controller.presignURL('demo.test');
+
+    expect(result).toBeDefined();
+    expect(result).toStrictEqual(
+      new ApiResponse({ url: 'https://test.com' }, HttpStatus.OK),
+    );
+
+    expect(apiService.presignReadURL).toHaveBeenCalledTimes(1);
+  });
+
+  it('should "createCountry" works', async () => {
+    const payload = { name: 'Test' };
+    const result = await controller.createCountry(payload);
+
+    expect(result).toBeDefined();
+    expect(result).toStrictEqual(
+      new ApiResponse({ name: payload.name, id: 0 }, HttpStatus.CREATED),
+    );
   });
 });

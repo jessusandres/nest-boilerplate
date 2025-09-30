@@ -57,6 +57,6 @@ export class HomeController {
   async createCountry(@Body() payload: CreateCountryReqDto) {
     const data = await Promise.resolve({ name: payload.name, id: 0 });
 
-    return new ApiResponse(data, HttpStatus.OK);
+    return new ApiResponse(data, HttpStatus.CREATED);
   }
 }

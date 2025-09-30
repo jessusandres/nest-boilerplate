@@ -15,8 +15,9 @@ import {
   mockGetResponse,
   mockStatus,
 } from '@tests/mocks/HttpContext.mock';
-import { TypeExceptionFilter } from './type-exception.filter';
 import { RedisService } from '@infrastructure/cache';
+import { FindLastCountryResponse } from '@modules/home/dto';
+import { TypeExceptionFilter } from './type-exception.filter';
 
 describe('TypeExceptionFilter', () => {
   let app: INestApplication;
@@ -69,7 +70,11 @@ describe('TypeExceptionFilter', () => {
 
     jest
       .spyOn(homeService, 'getLastCountry')
-      .mockImplementation(mockImplementation as any);
+      .mockImplementation(
+        mockImplementation as unknown as () => Promise<
+          FindLastCountryResponse | undefined
+        >,
+      );
 
     return request(app.getHttpServer())
       .get('/')

@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import {
+  ExecutionContext,
   HttpStatus,
   INestApplication,
   Logger,
@@ -72,7 +73,7 @@ describe('RolesGuard', () => {
     };
 
     try {
-      rolesGuard.canActivate(mockedContext as any);
+      rolesGuard.canActivate(mockedContext as unknown as ExecutionContext);
     } catch (e) {
       expect(e.status).toBe(HttpStatus.UNAUTHORIZED);
       expect(e).toBeInstanceOf(UnauthorizedException);
@@ -90,7 +91,9 @@ describe('RolesGuard', () => {
       getClass: jest.fn().mockReturnValue({}),
     };
 
-    const result = rolesGuard.canActivate(mockedContext as any);
+    const result = rolesGuard.canActivate(
+      mockedContext as unknown as ExecutionContext,
+    );
 
     expect(result).toBe(true);
   });
@@ -124,7 +127,9 @@ describe('RolesGuard', () => {
       getClass: jest.fn().mockReturnValue({}),
     };
 
-    const result = rolesGuard.canActivate(mockedContext as any);
+    const result = rolesGuard.canActivate(
+      mockedContext as unknown as ExecutionContext,
+    );
 
     expect(result).toBe(true);
   });
@@ -148,7 +153,9 @@ describe('RolesGuard', () => {
       getClass: jest.fn().mockReturnValue({}),
     };
 
-    const result = rolesGuard.canActivate(mockedContext as any);
+    const result = rolesGuard.canActivate(
+      mockedContext as unknown as ExecutionContext,
+    );
 
     expect(result).toBe(true);
   });

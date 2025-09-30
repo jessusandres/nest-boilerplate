@@ -12,9 +12,8 @@ import {
 import { fileExtension } from '@shared/helpers';
 import { StorageRepository } from './storage.repository';
 
-@Injectable()
-export class GoogleCloudStorageService implements StorageRepository {
-  private readonly logger = new Logger(GoogleCloudStorageService.name);
+export class GoogleCloudStorageRepository implements StorageRepository {
+  private readonly logger = new Logger(GoogleCloudStorageRepository.name);
 
   private readonly storage: Storage;
   private readonly bucketName: string;

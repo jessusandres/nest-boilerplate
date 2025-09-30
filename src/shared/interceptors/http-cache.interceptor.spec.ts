@@ -1,3 +1,4 @@
+import { ExecutionContext } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CacheModule } from '@nestjs/cache-manager';
 
@@ -34,7 +35,7 @@ describe('HttpCacheInterceptor', () => {
   });
 
   it('should "trackBy" works', () => {
-    httpCacheInterceptor.trackBy(mockedContext as any);
+    httpCacheInterceptor.trackBy(mockedContext as unknown as ExecutionContext);
 
     expect(mockedContext.switchToHttp).toHaveBeenCalledTimes(1);
     expect(mockGetRequest).toHaveBeenCalledTimes(1);

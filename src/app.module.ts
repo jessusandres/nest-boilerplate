@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ThrottlerGuard } from '@nestjs/throttler';
 
 /* Project */
+import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { AppConfigModule } from '@core/config';
 import { CoreModule } from '@core/core.module';
 import { LoggerMiddleware } from '@shared/middlewares';
@@ -25,6 +26,7 @@ import { Modules } from './modules';
     AppConfigModule,
     CoreModule,
     SharedModule,
+    InfrastructureModule,
     ...Modules,
   ],
   controllers: [AppController],

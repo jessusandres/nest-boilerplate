@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -10,7 +10,6 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 /* Project */
 import { StorageRepository, SignedUpload } from './storage.repository';
 
-@Injectable()
 export class AwsS3StorageRepository implements StorageRepository {
   private readonly logger = new Logger(AwsS3StorageRepository.name);
 
@@ -53,6 +52,7 @@ export class AwsS3StorageRepository implements StorageRepository {
     const uploadSignedUrl = await getSignedUrl(this.client, command, {
       expiresIn: 120,
     });
+
     const publicUrl = this.publicBaseUrl
       ? `${this.publicBaseUrl}/${fileName}`
       : `https://${this.bucketName}.s3.amazonaws.com/${fileName}`;

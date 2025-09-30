@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 
 /* Project */
-import { GoogleCloudStorageService } from './google-cloud-storage.service';
+import { GoogleCloudStorageRepository } from './google-cloud-storage.repository';
 
 const defaultFileName = 'test.pdf';
 
@@ -29,11 +29,19 @@ jest.mock('@google-cloud/storage', () => {
 });
 
 describe('StorageService', () => {
-  let storageService: GoogleCloudStorageService;
+  let storageService: GoogleCloudStorageRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GoogleCloudStorageService, ConfigService],
+      providers: [
+        ConfigService,
+        {
+          provide: 'TestGoogleCloudStorageRepository',
+          inject: [ConfigService],
+          useFactory: (configService) =>
+            new GoogleCloudStorageRepository(configService),
+        },
+      ],
     })
       .overrideProvider(ConfigService)
       .useValue({
@@ -41,8 +49,8 @@ describe('StorageService', () => {
       })
       .compile();
 
-    storageService = module.get<GoogleCloudStorageService>(
-      GoogleCloudStorageService,
+    storageService = module.get<GoogleCloudStorageRepository>(
+      'TestGoogleCloudStorageRepository',
     );
   });
 
@@ -69,5 +77,15 @@ describe('StorageService', () => {
     expect(mockGetSignedUrl).toHaveBeenCalledTimes(1);
     expect(result.publicUrl).toBeDefined();
     expect(result.uploadSignedUrl).toBeDefined();
+  });
+
+  it('should "generateReadSignedUrl" works', async () => {
+    const result = await storageService.generateReadSignedUrl('demo.pdf');
+
+    expect(result).toBeDefined();
+    expect(typeof result).toBe('string');
+    expect(result).toBe(`https://storage.googleapis.com/${defaultFileName}`);
+
+    expect(mockGetSignedUrl).toHaveBeenCalledTimes(1);
   });
 });
