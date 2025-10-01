@@ -17,6 +17,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "types": ["jest"],
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@components/*": [
         "src/components/*"

@@ -1,4 +1,3 @@
-/* External */
 import {
   AutoIncrement,
   Column,
@@ -8,7 +7,7 @@ import {
 } from 'sequelize-typescript';
 
 /* Project */
-import { ICountry } from './interfaces';
+import { ICountry } from '@infrastructure/database/interfaces';
 
 @Table({
   tableName: 'countries',

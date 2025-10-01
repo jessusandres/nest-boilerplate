@@ -149,7 +149,7 @@ src
 │   │       ├── country.entity.ts
 │   │       ├── index.ts
 │   │       └── interfaces
-│   │           ├── country.entity.interface.ts
+│   │           ├── country.interface.ts
 │   │           └── index.ts
 │   ├── http
 │   │   └── index.ts

@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 /* Project */
 import { STORAGE_REPOSITORY, StorageRepository } from '@infrastructure/storage';
+import { isFileName } from '@shared/utils';
 
 @Injectable()
 export class StorageService {
@@ -24,11 +25,13 @@ export class StorageService {
   ) {}
 
   async generateUploadSignedUrl(fileName: string) {
-    this.logger.debug(`Generating read signed url for ${fileName}`);
+    this.logger.debug(`Generating upload signed url for ${fileName}`);
+
+    const isFileValid = isFileName(fileName);
+
+    if (!isFileValid) throw new Error('Invalid file name');
 
     const extension = fileName.split('.').pop();
-
-    if (!extension) throw new Error('Invalid file name');
 
     const storageType = this.storageTypes.find(
       (t) => t.extension === extension,
@@ -46,11 +49,11 @@ export class StorageService {
 
   async generateReadSignedUrl(fileName: string) {
     this.logger.debug(`Generating read signed url for ${fileName}`);
+    const isFileValid = isFileName(fileName);
+
+    if (!isFileValid) throw new Error('Invalid file name');
 
     const extension = fileName.split('.').pop();
-
-    if (!extension) throw new Error('Invalid file name');
-
     const storageType = this.storageTypes.find(
       (t) => t.extension === extension,
     );

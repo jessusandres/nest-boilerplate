@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 export const mockJson = jest.fn();
 
 export const mockStatus = jest.fn().mockImplementation(() => ({
@@ -27,3 +29,16 @@ export const argumentsHostMock = {
   switchToRpc: jest.fn(),
   switchToWs: jest.fn(),
 };
+
+export class MockResponse extends EventEmitter {
+  statusCode = 200;
+  private headers: Record<string, string> = {};
+
+  get(name: string): string | undefined {
+    return this.headers[name.toLowerCase()];
+  }
+
+  set(name: string, value: string) {
+    this.headers[name.toLowerCase()] = value;
+  }
+}

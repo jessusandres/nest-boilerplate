@@ -5,6 +5,7 @@ export {
   mockStatus,
   mockHttpArgumentsHost,
   mockJson,
+  MockResponse,
 } from './HttpContext.mock';
 
 export { KeyvRedisMock } from './redis-keyv.mock';

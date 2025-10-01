@@ -1,30 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/sequelize';
 
 /* Project */
-import { CountryEntity } from '@infrastructure/database/models';
+import {
+  COUNTRY_REPOSITORY,
+  CountryRepository,
+} from '@infrastructure/database/repositories/country.repository';
 import { FindLastCountryHandler } from './find-last-country.handler';
 import { FindLastCountryQuery } from '../impl';
 
 describe('FindLastCountryHandler', () => {
   let handler: FindLastCountryHandler;
-  let countryModel: typeof CountryEntity;
+  let repository: jest.Mocked<CountryRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FindLastCountryHandler,
         {
-          provide: getModelToken(CountryEntity),
+          provide: COUNTRY_REPOSITORY,
           useValue: {
-            findOne: jest.fn(),
-          },
+            findLast: jest.fn(),
+          } as jest.Mocked<CountryRepository>,
         },
       ],
     }).compile();
 
     handler = module.get(FindLastCountryHandler);
-    countryModel = module.get(getModelToken(CountryEntity));
+    repository = module.get(COUNTRY_REPOSITORY);
 
     await module.init();
   });
@@ -37,34 +39,34 @@ describe('FindLastCountryHandler', () => {
     expect(handler).toBeDefined();
   });
 
-  it('should return the last country when one exists and call findOne with expected options', async () => {
+  it('should return the last country when one exists and call repository.findLast', async () => {
+    jest.useFakeTimers();
+
     const mockCountry = { id: 42, name: 'Wakanda' };
 
-    jest
-      .spyOn(countryModel, 'findOne')
-      .mockResolvedValueOnce(mockCountry as unknown as CountryEntity);
+    repository.findLast.mockResolvedValueOnce(mockCountry);
 
     const execPromise = handler.execute(new FindLastCountryQuery());
+    jest.runAllTimers();
 
     const result = await execPromise;
 
-    expect(countryModel.findOne).toHaveBeenCalledWith({
-      limit: 1,
-      order: [['id', 'DESC']],
-    });
-
+    expect(repository.findLast).toHaveBeenCalledTimes(1);
     expect(result).toEqual({ id: 42, name: 'Wakanda' });
+    jest.useRealTimers();
   });
 
   it('should return undefined when no country exists', async () => {
-    jest
-      .spyOn(countryModel, 'findOne')
-      .mockResolvedValueOnce(null as unknown as CountryEntity);
+    jest.useFakeTimers();
+
+    repository.findLast.mockResolvedValueOnce(undefined);
 
     const execPromise = handler.execute(new FindLastCountryQuery());
+    jest.runAllTimers();
 
     const result = await execPromise;
 
     expect(result).toBeUndefined();
+    jest.useRealTimers();
   });
 });

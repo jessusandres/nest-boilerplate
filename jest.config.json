@@ -17,12 +17,7 @@
     "!**/vendor/**",
     "!**/dist/**",
     "!**/test/**",
-    "!**/coverage/**",
-    "!**/shared/**",
-    "!**/domain/events/**",
-    "!**/infrastructure/database/**",
-    "!**/infrastructure/ioc/**",
-    "!**/infrastructure/env/**"
+    "!**/coverage/**"
   ],
   "coverageDirectory": "../coverage",
   "testEnvironment": "node",

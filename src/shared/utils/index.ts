@@ -1,5 +1,4 @@
 /* Project */
-import { getEnv } from '@core/config/env';
 import { Role } from '../enums';
 
 export const JWKS_REQUESTS_PER_MINUTE = 5 as const;
@@ -56,4 +55,6 @@ export const createSortObject = (
 export const minutesInMilliseconds = (minutes: number) => minutes * 60 * 1000;
 export const secondsInMilliseconds = (seconds: number) => seconds * 1000;
 
-export { getEnv };
+const fileNameRegex = /^[\w,\s-]+\.[A-Za-z0-9]{1,5}$/;
+
+export const isFileName = (fileName: string) => fileNameRegex.test(fileName);

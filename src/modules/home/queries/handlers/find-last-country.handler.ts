@@ -1,9 +1,11 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/sequelize';
 
 /* Project */
-import { CountryEntity } from '@infrastructure/database/models';
+import {
+  COUNTRY_REPOSITORY,
+  CountryRepository,
+} from '@infrastructure/database/repositories/country.repository';
 import { FindLastCountryQuery } from '../impl';
 import { FindLastCountryQueryResult } from '../interfaces';
 
@@ -14,8 +16,8 @@ export class FindLastCountryHandler
   private readonly logger = new Logger(FindLastCountryHandler.name);
 
   constructor(
-    @InjectModel(CountryEntity)
-    private readonly countryEntity: typeof CountryEntity,
+    @Inject(COUNTRY_REPOSITORY)
+    private readonly countries: CountryRepository,
   ) {}
 
   async execute(
@@ -25,12 +27,10 @@ export class FindLastCountryHandler
       `Executing FindLastCountryHandler with payload: ${JSON.stringify(query)}`,
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    this.logger.log('Sleeping for 1 second 😴...');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const lastCountry = await this.countryEntity.findOne({
-      limit: 1,
-      order: [['id', 'DESC']],
-    });
+    const lastCountry = await this.countries.findLast();
 
     if (!lastCountry) return undefined;
 
