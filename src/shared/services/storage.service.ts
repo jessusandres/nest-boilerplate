@@ -1,8 +1,14 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 /* Project */
 import { STORAGE_REPOSITORY, StorageRepository } from '@infrastructure/storage';
 import { isFileName } from '@shared/utils';
+import { fileExtension } from '@shared/helpers';
 
 @Injectable()
 export class StorageService {
@@ -24,44 +30,48 @@ export class StorageService {
     private readonly storage: StorageRepository,
   ) {}
 
-  async generateUploadSignedUrl(fileName: string) {
-    this.logger.debug(`Generating upload signed url for ${fileName}`);
+  validaFileName(filename: string): {
+    filename: string;
+    extension: string;
+    contentType: string;
+  } {
+    const trimmedFilename = filename.trim();
 
-    const isFileValid = isFileName(fileName);
+    const isFileValid = isFileName(trimmedFilename);
 
-    if (!isFileValid) throw new Error('Invalid file name');
+    if (!isFileValid)
+      throw new UnprocessableEntityException('Invalid file name');
 
-    const extension = fileName.split('.').pop();
+    const extension = fileExtension(trimmedFilename);
 
     const storageType = this.storageTypes.find(
       (t) => t.extension === extension,
     );
 
     if (!storageType) {
-      throw new Error('Invalid file type');
+      throw new UnprocessableEntityException('Invalid file type');
     }
 
-    return this.storage.generateUploadSignedUrl(
-      fileName,
-      storageType.contentType,
-    );
+    return {
+      filename: trimmedFilename,
+      extension: storageType.extension,
+      contentType: storageType.contentType,
+    };
   }
 
-  async generateReadSignedUrl(fileName: string) {
-    this.logger.debug(`Generating read signed url for ${fileName}`);
-    const isFileValid = isFileName(fileName);
+  async generateUploadSignedUrl(rawFilename: string) {
+    this.logger.debug(`Generating upload signed url for ${rawFilename}`);
 
-    if (!isFileValid) throw new Error('Invalid file name');
+    const { filename, contentType } = this.validaFileName(rawFilename);
 
-    const extension = fileName.split('.').pop();
-    const storageType = this.storageTypes.find(
-      (t) => t.extension === extension,
-    );
+    return this.storage.generateUploadSignedUrl(filename, contentType);
+  }
 
-    if (!storageType) {
-      throw new Error('Invalid file type');
-    }
+  async generateReadSignedUrl(rawFilename: string) {
+    this.logger.debug(`Generating read signed url for ${rawFilename}`);
 
-    return this.storage.generateReadSignedUrl(fileName);
+    const { filename, contentType } = this.validaFileName(rawFilename);
+
+    return this.storage.generateReadSignedUrl(filename, contentType);
   }
 }

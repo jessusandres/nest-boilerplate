@@ -52,6 +52,7 @@ export const createSortObject = (
   return sortObject;
 };
 
+export const minutesInSeconds = (minutes: number) => minutes * 60;
 export const minutesInMilliseconds = (minutes: number) => minutes * 60 * 1000;
 export const secondsInMilliseconds = (seconds: number) => seconds * 1000;
 

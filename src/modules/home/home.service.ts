@@ -28,4 +28,11 @@ export class HomeService {
 
     return { url };
   }
+
+  async presignUploadReadURL(filename: string): Promise<{ url: string }> {
+    const uploadSignedUrl =
+      await this.storageService.generateUploadSignedUrl(filename);
+
+    return { url: uploadSignedUrl };
+  }
 }

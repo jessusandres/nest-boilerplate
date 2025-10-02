@@ -57,8 +57,6 @@ describe('AwsS3StorageRepository', () => {
               return 'my-bucket';
             case 'AWS_REGION':
               return 'us-east-1';
-            case 'S3_PUBLIC_BASE_URL':
-              return publicBaseUrl;
             default:
               return undefined;
           }
@@ -78,7 +76,10 @@ describe('AwsS3StorageRepository', () => {
   });
 
   it('generateReadSignedUrl should call getSignedUrl with GetObjectCommand and return URL', async () => {
-    const url = await repository.generateReadSignedUrl(defaultFileName);
+    const url = await repository.generateReadSignedUrl(
+      defaultFileName,
+      'application/pdf',
+    );
 
     expect(url).toBeDefined();
     expect(typeof url).toBe('string');
@@ -102,9 +103,7 @@ describe('AwsS3StorageRepository', () => {
     );
 
     expect(result).toBeDefined();
-    expect(result.uploadSignedUrl).toBe('https://signed-url.example');
-    expect(result.publicUrl).toBe(`${publicBaseUrl}/${defaultFileName}`);
-    expect(result.headers).toEqual({ 'Content-Type': defaultContentType });
+    expect(result).toBe('https://signed-url.example');
 
     expect(PutObjectCommandMock).toHaveBeenCalledTimes(1);
     expect(mockGetSignedUrl).toHaveBeenCalledTimes(1);
@@ -113,7 +112,7 @@ describe('AwsS3StorageRepository', () => {
       Bucket: 'my-bucket',
       Key: defaultFileName,
       ContentType: defaultContentType,
-      ACL: 'public-read',
+      ACL: 'private',
     });
   });
 });

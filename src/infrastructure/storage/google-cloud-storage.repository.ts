@@ -9,8 +9,8 @@ import {
 } from '@google-cloud/storage';
 
 /* Project */
-import { fileExtension } from '@shared/helpers';
 import { StorageRepository } from './storage.repository';
+import { minutesInMilliseconds } from '@shared/utils';
 
 export class GoogleCloudStorageRepository implements StorageRepository {
   private readonly logger = new Logger(GoogleCloudStorageRepository.name);
@@ -18,7 +18,6 @@ export class GoogleCloudStorageRepository implements StorageRepository {
   private readonly storage: Storage;
   private readonly bucketName: string;
   private readonly projectID: string;
-  private readonly storageApiUrl = 'https://storage.googleapis.com';
 
   constructor(private readonly configService: ConfigService) {
     this.bucketName = this.configService.get('BUCKET_NAME')!;
@@ -45,7 +44,7 @@ export class GoogleCloudStorageRepository implements StorageRepository {
       .getSignedUrl({
         action: 'read',
         version: 'v4',
-        expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+        expires: Date.now() + minutesInMilliseconds(5),
       });
 
     return url;
@@ -53,21 +52,16 @@ export class GoogleCloudStorageRepository implements StorageRepository {
 
   async generateUploadSignedUrl(
     fileName: string,
-  ): Promise<{ uploadSignedUrl: string; publicUrl: string }> {
+    contentType: string,
+  ): Promise<string> {
     this.logger.debug(`Generating upload signed url for ${fileName}`);
 
     // These options will allow temporary uploading of the file with outgoing
     const options: GetSignedUrlConfig = {
       version: 'v4',
-      action: 'read',
-      expires: Date.now() + 2 * 60 * 1000, // 2 minutes
-      contentType:
-        fileExtension(fileName).toLowerCase() === 'pdf'
-          ? 'application/pdf'
-          : 'text/csv',
-      extensionHeaders: {
-        'X-Goog-Acl': 'public-read',
-      },
+      action: 'write',
+      expires: Date.now() + minutesInMilliseconds(5),
+      contentType,
     };
 
     const [uploadSignedUrl]: GetSignedUrlResponse = await this.storage
@@ -75,8 +69,6 @@ export class GoogleCloudStorageRepository implements StorageRepository {
       .file(fileName)
       .getSignedUrl(options);
 
-    const publicUrl = `${this.storageApiUrl}/${this.bucketName}/${fileName}`;
-
-    return { uploadSignedUrl, publicUrl };
+    return uploadSignedUrl;
   }
 }

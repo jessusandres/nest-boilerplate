@@ -61,22 +61,27 @@ describe('StorageService', () => {
   });
 
   it('should "generateV4UploadSignedUrl" works', async () => {
-    const result =
-      await storageService.generateUploadSignedUrl(defaultFileName);
+    const result = await storageService.generateUploadSignedUrl(
+      defaultFileName,
+      'application/pdf',
+    );
 
     expect(result).toBeDefined();
     expect(mockGetSignedUrl).toHaveBeenCalledTimes(1);
-    expect(result.publicUrl).toBeDefined();
-    expect(result.uploadSignedUrl).toBeDefined();
+    expect(result).toBeDefined();
+    expect(result).toBeDefined();
   });
 
   it('should "generateV4UploadSignedUrl" works with other extension', async () => {
-    const result = await storageService.generateUploadSignedUrl('demo.csv');
+    const result = await storageService.generateUploadSignedUrl(
+      'demo.csv',
+      'text/csv',
+    );
 
     expect(result).toBeDefined();
     expect(mockGetSignedUrl).toHaveBeenCalledTimes(1);
-    expect(result.publicUrl).toBeDefined();
-    expect(result.uploadSignedUrl).toBeDefined();
+    expect(result).toBeDefined();
+    expect(result).toBeDefined();
   });
 
   it('should "generateReadSignedUrl" works', async () => {
