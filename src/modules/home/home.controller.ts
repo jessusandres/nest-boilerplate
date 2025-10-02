@@ -16,7 +16,11 @@ import { ApiResponse } from '@shared/dto';
 import { ApiOkResponseWithData, Roles } from '@shared/decorators';
 import { Role } from '@shared/enums';
 import { HomeService } from './home.service';
-import { CreateCountryReqDto, FindLastCountryResponse } from './dto';
+import {
+  CreateCountryReqDto,
+  FindLastCountryResponse,
+  SignedURLResponseDto,
+} from './dto';
 
 @Controller()
 export class HomeController {
@@ -37,6 +41,10 @@ export class HomeController {
     return new ApiResponse(data, HttpStatus.OK);
   }
 
+  @ApiOkResponseWithData(Array<string>, {
+    description: 'Get cache keys',
+    nullable: true,
+  })
   @Get('/cache-keys')
   async cacheKeys(): Promise<unknown> {
     const data = await this.homeService.getCacheKeys();
@@ -44,6 +52,10 @@ export class HomeController {
     return new ApiResponse(data, HttpStatus.OK);
   }
 
+  @ApiOkResponseWithData(SignedURLResponseDto, {
+    description: 'Return signed url for read private file',
+    nullable: true,
+  })
   @Get('/presign-read-url/:filename')
   async presignURL(@Param('filename') filename: string): Promise<unknown> {
     const data = await this.homeService.presignReadURL(filename);
@@ -51,6 +63,10 @@ export class HomeController {
     return new ApiResponse(data, HttpStatus.OK);
   }
 
+  @ApiOkResponseWithData(SignedURLResponseDto, {
+    description: 'Return signed url for upload file',
+    nullable: true,
+  })
   @Get('/presign-upload-url/:filename')
   async presignUploadURL(
     @Param('filename') filename: string,

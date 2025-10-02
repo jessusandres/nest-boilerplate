@@ -5,7 +5,6 @@ if (/true/.test(process.env.ENABLE_NEW_RELIC || 'false')) {
 
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
-
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -33,6 +32,7 @@ async function bootstrap(): Promise<void> {
   const pathPrefix: string = configService.get('PATH_PREFIX') || 'api';
 
   const port = configService.get<number>('PORT')!;
+  const host = configService.get<string>('HOST')!;
 
   app.setGlobalPrefix(pathPrefix, {
     exclude: ['health'],
@@ -69,8 +69,8 @@ async function bootstrap(): Promise<void> {
 
   await app.init();
 
-  await app.listen(port, () => {
-    logger.log(`APP READY TO LISTEN ON PORT::${configService.get('PORT')}`);
+  await app.listen(port, host, () => {
+    logger.log(`APP READY TO LISTEN ON ${host}:${port}/${pathPrefix}`);
   });
 }
 

@@ -42,7 +42,7 @@ Create a `.env` file at the repository root using `.env.example` as a template.
 Main variables (see all in `.env.example`):
 
 - Application
-  - APP_NAME=lookerdevelopers-stores-svc-backoffice
+  - APP_NAME=lookerdevelopers-boilerplate
   - API_VERSION=1
   - HOST=127.0.0.1
   - PORT=6001
