@@ -8,8 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 
 /* External */
-import { IS_PUBLIC_KEY } from '../utils';
-import { AuthenticatedRequest } from '@shared/interfaces';
+import { AuthenticatedRequest } from '../interfaces';
+import { IS_PUBLIC_KEY } from '../helpers';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

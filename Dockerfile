@@ -1,5 +1,4 @@
 # Stage 1: Compile and Build angular codebase
-
 # Use official node image as the base image
 FROM node:22-alpine3.18 AS build
 
@@ -37,7 +36,7 @@ COPY --chown=node:node --from=build /usr/src/app/dist /usr/src/app
 
 USER node
 
-EXPOSE 8080
+EXPOSE ${PORT}
 
 CMD ["node", "/usr/src/app/main.js"]
 

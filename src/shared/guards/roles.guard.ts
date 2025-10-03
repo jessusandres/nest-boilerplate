@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 /* Project */
 import { Role } from '../enums';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { USER_ROLES_MAP } from '../utils';
+import { USER_ROLES_MAP } from '../helpers';
 import { AuthenticatedRequest, IUserProfile } from '../interfaces';
 
 @Injectable()

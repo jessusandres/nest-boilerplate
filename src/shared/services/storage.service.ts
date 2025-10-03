@@ -7,8 +7,7 @@ import {
 
 /* Project */
 import { STORAGE_REPOSITORY, StorageRepository } from '@infrastructure/storage';
-import { isFileName } from '@shared/utils';
-import { fileExtension } from '@shared/helpers';
+import { isFileName, fileExtension } from '@shared/utils';
 
 @Injectable()
 export class StorageService {
